@@ -118,8 +118,8 @@ dependencies:
       - graphql-relay==3.2.0
       - graphviz==0.20.3
       - greenlet==3.0.3
-      - grpcio==1.70.0
-      - grpcio-health-checking==1.62.3
+      - grpcio==1.62.2
+      - grpcio-health-checking==1.62.2
       - gunicorn==21.2.0
       - h11==0.14.0
       - h5py==3.10.0
