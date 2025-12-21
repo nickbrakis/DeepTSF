@@ -6,9 +6,9 @@ from darts.metrics import mase as mase_darts
 from darts.metrics import mae as mae_darts
 from darts.metrics import rmse as rmse_darts
 from darts.metrics import smape as smape_darts
-# from darts.models import (
-#     NaiveSeasonal,
-# )
+from darts.models import (
+    NaiveSeasonal,
+)
 from darts import TimeSeries
 import matplotlib.pyplot as plt
 import numpy as np
@@ -27,10 +27,10 @@ import shutil
 from .preprocessing import split_dataset
 import tempfile
 import random
-# import shap
+import shap
 from typing import Union
 from typing import List
-# import darts
+import darts
 import json
 import statistics
 from minio import Minio
@@ -142,14 +142,6 @@ def backtester(model,
     #TODO Add check for that in the beggining
     # series = extract_subseries(series, min_gap_size=1, mode='any')[-1]
     # series_transformed = extract_subseries(series_transformed, min_gap_size=1, mode='any')[-1]
-    
-    # Lazy imports
-    import darts
-    from darts.metrics import mape as mape_darts
-    from darts.metrics import mase as mase_darts
-    from darts.metrics import mae as mae_darts
-    from darts.metrics import rmse as rmse_darts
-    from darts.metrics import smape as smape_darts
 
     test_start_date = series_transformed.pd_dataframe()[series_transformed.pd_dataframe().index >= pd.Timestamp(test_start_date + " 00:00:00")].index[0]
     # plot_series(df_list=[series_transformed], 
@@ -661,8 +653,6 @@ def call_shap(n_past_covs: int,
     data
         The samples to be tested
     """
-    
-    import shap
 
     shap.initjs()
     explainer = shap.KernelExplainer(lambda x : predict(x, 
@@ -695,7 +685,7 @@ def call_shap(n_past_covs: int,
             plt.close()
             bar_plot_store_json(shap_values[:, :, no_comp*shap_output_length + out], data, f"{interprtmpdir}/summary_plot_bar_data_out_{out}_comp_{id_l[no_comp]}.json")
             shap.force_plot(explainer.expected_value[no_comp*shap_output_length + out],shap_values[:, :, no_comp*shap_output_length + out][sample,:], data.iloc[sample,:],  matplotlib = True, show = False)
-            str_ = f"{interprtmpdir}/force_plot_of_{sample}_sample_starting_at_{str(pd.to_datetime(data.iloc[sample].iloc[-1], unit='s').tz_localize(None)).replace(':', '_')}_{out}_output_comp_{id_l[no_comp]}.png"
+            str_ = f"{interprtmpdir}/force_plot_of_{sample}_sample_starting_at_{str(pd.to_datetime(data.iloc[sample].iloc[-1], unit='s').tz_localize(None)).replace(":", "_")}_{out}_output_comp_{id_l[no_comp]}.png"
             plt.savefig(str_)
             plt.close()
 

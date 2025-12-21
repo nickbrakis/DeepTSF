@@ -12,30 +12,29 @@ from darts.models import (
     NaiveSeasonal,
 )
 # the following are used through eval(darts_model + 'Model')
-# Imports moved to inside functions to prevent SIGILL crash
-# from darts.models import RNNModel, BlockRNNModel, NBEATSModel, TFTModel, NaiveDrift, NaiveSeasonal, TCNModel, NHiTSModel, TransformerModel
-# from darts_mlp.models import MLPModel
-# from darts.models.forecasting.arima import ARIMA
-# # from darts.models.forecasting.auto_arima import AutoARIMA
-# from darts.models.forecasting.lgbm import LightGBMModel
-# from darts.models.forecasting.random_forest import RandomForest
-# from darts.utils.likelihood_models import ContinuousBernoulliLikelihood, GaussianLikelihood, DirichletLikelihood, ExponentialLikelihood, GammaLikelihood, GeometricLikelihood
+from darts.models import RNNModel, BlockRNNModel, NBEATSModel, TFTModel, NaiveDrift, NaiveSeasonal, TCNModel, NHiTSModel, TransformerModel
+from darts_mlp.models import MLPModel
+from darts.models.forecasting.arima import ARIMA
+# from darts.models.forecasting.auto_arima import AutoARIMA
+from darts.models.forecasting.lgbm import LightGBMModel
+from darts.models.forecasting.random_forest import RandomForest
+from darts.utils.likelihood_models import ContinuousBernoulliLikelihood, GaussianLikelihood, DirichletLikelihood, ExponentialLikelihood, GammaLikelihood, GeometricLikelihood
 
 import yaml
 import mlflow
 import click
 import os
-# import torch
+import torch
 import logging
 import pickle
 import tempfile
-# from pytorch_lightning.callbacks.early_stopping import EarlyStopping
+from pytorch_lightning.callbacks.early_stopping import EarlyStopping
 import shutil
 import optuna
 import pandas as pd
 # Inference requirements to be stored with the darts flavor !!
 from sys import version_info
-# import torch, cloudpickle, darts
+import torch, cloudpickle, darts
 import matplotlib.pyplot as plt
 import pprint
 from sklearn.metrics import mean_absolute_percentage_error as mape
@@ -319,18 +318,6 @@ def objective(series_csv, series_uri, future_covs_csv, future_covs_uri,
              scale_covs, multiple, eval_series, mlrun, trial, study, opt_tmpdir, 
              num_workers, eval_method, loss_function, opt_all_results,
              evaluate_all_ts, num_samples, pv_ensemble, format):
-             
-                # Lazy loading inside objective
-                import torch
-                from pytorch_lightning.callbacks.early_stopping import EarlyStopping
-                
-                # Darts imports
-                from darts.models import RNNModel, BlockRNNModel, NBEATSModel, TFTModel, NaiveDrift, NaiveSeasonal, TCNModel, NHiTSModel, TransformerModel
-                from darts_mlp.models import MLPModel
-                from darts.models.forecasting.arima import ARIMA
-                from darts.models.forecasting.lgbm import LightGBMModel
-                from darts.models.forecasting.random_forest import RandomForest
-                from darts.utils.likelihood_models import ContinuousBernoulliLikelihood, GaussianLikelihood, DirichletLikelihood, ExponentialLikelihood, GammaLikelihood, GeometricLikelihood
 
                 # hyperparameters = ConfigParser(config_file='../config_opt.yml', config_string=hyperparams_entrypoint).read_hyperparameters(hyperparams_entrypoint)
                 hyperparameters = hyperparams_entrypoint
@@ -435,19 +422,6 @@ def train(series_uri, future_covs_uri, past_covs_uri, darts_model,
           test_end_date, device, scale, scale_covs, multiple,
           training_dict, mlrun, num_workers, resolution, trial, pv_ensemble, format):
 
-
-    import torch
-    import cloudpickle
-    import darts
-    from pytorch_lightning.callbacks.early_stopping import EarlyStopping
-    
-    # Darts Models
-    from darts.models import RNNModel, BlockRNNModel, NBEATSModel, TFTModel, NaiveDrift, NaiveSeasonal, TCNModel, NHiTSModel, TransformerModel
-    from darts_mlp.models import MLPModel
-    from darts.models.forecasting.arima import ARIMA
-    from darts.models.forecasting.lgbm import LightGBMModel
-    from darts.models.forecasting.random_forest import RandomForest
-    from darts.utils.likelihood_models import ContinuousBernoulliLikelihood, GaussianLikelihood, DirichletLikelihood, ExponentialLikelihood, GammaLikelihood, GeometricLikelihood
 
     # Argument preprocessing
 
