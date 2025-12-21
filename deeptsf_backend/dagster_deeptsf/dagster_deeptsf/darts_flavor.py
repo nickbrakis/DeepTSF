@@ -1,5 +1,5 @@
 import os
-from utils import load_model, load_scaler, load_ts_id, parse_uri_prediction_input, load_local_model_info, to_seconds
+# from utils import load_model, load_scaler, load_ts_id, parse_uri_prediction_input, load_local_model_info, to_seconds
 import pretty_errors
 from urllib3.exceptions import InsecureRequestWarning
 from urllib3 import disable_warnings
@@ -78,6 +78,8 @@ class _MLflowPLDartsModelWrapper:
         """
 
         # Accomodate bentoml
+        # Lazy imports
+        from utils import parse_uri_prediction_input
         try:
             model_input = model_input[0]
             batched = True
@@ -139,6 +141,9 @@ class _MLflowPLDartsModelWrapper:
 def _load_pyfunc(model_folder):
     """
     Load PyFunc implementation. Called by `pyfunc.load_pyfunc` for model loading in MLflow.
+    
+    # Lazy imports
+    from utils import load_model, load_scaler, load_ts_id, parse_uri_prediction_input, load_local_model_info
 
     Args:
         model_folder (str): The folder path where the model is stored.

@@ -2,29 +2,30 @@ import pretty_errors
 from .preprocessing import scale_covariates, split_dataset, split_nans
 
 # the following are used through eval(darts_model + 'Model')
-from darts.models import RNNModel, BlockRNNModel, NBEATSModel, TFTModel, NaiveDrift, NaiveSeasonal, TCNModel, NHiTSModel, TransformerModel
-from darts_mlp.models import MLPModel
-# from darts.models.forecasting.auto_arima import AutoARIMA
-from darts.models.forecasting.lgbm import LightGBMModel
-from darts.models.forecasting.random_forest import RandomForest
-from darts.models.forecasting.arima import ARIMA
-from darts.utils.likelihood_models import ContinuousBernoulliLikelihood, GaussianLikelihood, DirichletLikelihood, ExponentialLikelihood, GammaLikelihood, GeometricLikelihood
+# Imports moved to train() to prevent SIGILL on non-AVX CPUs during Dagster load
+# from darts.models import RNNModel, BlockRNNModel, NBEATSModel, TFTModel, NaiveDrift, NaiveSeasonal, TCNModel, NHiTSModel, TransformerModel
+# from darts_mlp.models import MLPModel
+# # from darts.models.forecasting.auto_arima import AutoARIMA
+# from darts.models.forecasting.lgbm import LightGBMModel
+# from darts.models.forecasting.random_forest import RandomForest
+# from darts.models.forecasting.arima import ARIMA
+# from darts.utils.likelihood_models import ContinuousBernoulliLikelihood, GaussianLikelihood, DirichletLikelihood, ExponentialLikelihood, GammaLikelihood, GeometricLikelihood
 
 import yaml
 import mlflow
 import click
 import os
-import torch
+# import torch
 import logging
 import pickle
 import tempfile
-from pytorch_lightning.callbacks.early_stopping import EarlyStopping
+# from pytorch_lightning.callbacks.early_stopping import EarlyStopping
 import shutil
 import pandas as pd
 from minio import Minio
 # Inference requirements to be stored with the darts flavor !!
 from sys import version_info
-import torch, cloudpickle, darts
+# import torch, cloudpickle, darts
 import sys
 sys.path.append('..')
 from utils import none_checker, ConfigParser, download_online_file, load_local_csv_or_df_as_darts_timeseries, truth_checker, load_yaml_as_dict, get_pv_forecast, to_seconds #, log_curves
@@ -79,6 +80,19 @@ my_stopper = EarlyStopping(
 
 def train(context, start_pipeline_run, etl_out):
     
+    import torch
+    import darts
+    import cloudpickle
+    from pytorch_lightning.callbacks.early_stopping import EarlyStopping
+    
+    # Darts Models
+    from darts.models import RNNModel, BlockRNNModel, NBEATSModel, TFTModel, NaiveDrift, NaiveSeasonal, TCNModel, NHiTSModel, TransformerModel
+    from darts_mlp.models import MLPModel
+    from darts.models.forecasting.lgbm import LightGBMModel
+    from darts.models.forecasting.random_forest import RandomForest
+    from darts.models.forecasting.arima import ARIMA
+    from darts.utils.likelihood_models import ContinuousBernoulliLikelihood, GaussianLikelihood, DirichletLikelihood, ExponentialLikelihood, GammaLikelihood, GeometricLikelihood
+
     past_covs_uri = etl_out["past_covs_uri"]
     future_covs_uri = etl_out["future_covs_uri"]
     series_uri = etl_out["series_uri"]
