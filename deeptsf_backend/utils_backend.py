@@ -233,11 +233,17 @@ def download_online_file(client, url, dst_filename=None, dst_dir=None, bucket_na
         dst_dir = tempfile.mkdtemp()
     else:
         os.makedirs(dst_dir, exist_ok=True)
+    
+    # Extract object key (relative path in bucket) and remove leading slash
+    if bucket_name in url:
+        object_key = url.split(bucket_name, 1)[-1].lstrip('/')
+    else:
+        object_key = url.lstrip('/')
     if dst_filename is None:
-        dst_filename = url.split('/')[-1]
+        dst_filename = object_key
     filepath = os.path.join(dst_dir, dst_filename)
-    url = url.split(bucket_name)[-1]
-    client.fget_object(bucket_name, url, filepath)
+    os.makedirs(os.path.dirname(filepath), exist_ok=True)
+    client.fget_object(bucket_name, object_key, filepath)
     # print(req)
     # if req.status_code != 200:
     #     raise Exception(f"\nResponse is not 200\nProblem downloading: {url}")
